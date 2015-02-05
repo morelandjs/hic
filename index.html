@@ -1,0 +1,255 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>hic &mdash; hic 0.1.dev0 documentation</title>
+  
+
+  
+  
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+    <link rel="top" title="hic 0.1.dev0 documentation" href="#"/>
+        <link rel="next" title="Anisotropic flow" href="flow.html"/> 
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.6.2/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-nav-search">
+        <a href="#" class="fa fa-home"> hic</a>
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+        
+        
+            <ul>
+<li class="toctree-l1"><a class="reference internal" href="flow.html">Anisotropic flow</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="flow.html#the-flow-vector">The flow vector</a></li>
+<li class="toctree-l2"><a class="reference internal" href="flow.html#flow-cumulants">Flow cumulants</a></li>
+<li class="toctree-l2"><a class="reference internal" href="flow.html#random-sampling">Random sampling</a></li>
+<li class="toctree-l2"><a class="reference internal" href="flow.html#module-hic.flow">Reference</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="initial.html">Initial conditions</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="initial.html#eccentricity-harmonics">Eccentricity harmonics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="initial.html#module-hic.initial">Reference</a></li>
+</ul>
+</li>
+</ul>
+
+        
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="#">hic</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="#">Docs</a> &raquo;</li>
+      
+    <li>hic</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          <a href="https://github.com/jbernhard/hic/blob/master/doc/index.rst" class="fa fa-github"> Edit on GitHub</a>
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main">
+            
+  <div class="section" id="hic">
+<h1>hic<a class="headerlink" href="#hic" title="Permalink to this headline">¶</a></h1>
+<p><tt class="docutils literal"><span class="pre">hic</span></tt> is a collection of Python modules for analyzing heavy-ion collision simulation data,
+e.g. calculating flow coefficients <span class="math">\(v_n\)</span> and initial condition eccentricities <span class="math">\(\varepsilon_n\)</span>.
+It&#8217;s a community project designed to facilitate computational heavy-ion research and reduce code duplication.</p>
+<p><tt class="docutils literal"><span class="pre">hic</span></tt> is under active development on <a class="reference external" href="https://github.com/jbernhard/hic">github</a>, and <a class="reference internal" href="#contributing"><em>contributions</em></a> are welcome!</p>
+<div class="section" id="installation">
+<h2>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h2>
+<p>Requirements: Python 2.7 or 3.3+ with <a class="reference external" href="http://www.numpy.org">numpy</a>.</p>
+<p><tt class="docutils literal"><span class="pre">hic</span></tt> is prerelease software.
+You can install the development version with <a class="reference external" href="https://pip.pypa.io">pip</a>:</p>
+<div class="highlight-python"><div class="highlight"><pre>pip install git+https://github.com/jbernhard/hic#egg=hic
+</pre></div>
+</div>
+<p>Or, if you want to edit the code, clone the repository and install in editable mode:</p>
+<div class="highlight-python"><div class="highlight"><pre>git clone git@github.com:jbernhard/hic.git
+pip install [--user] -e hic
+</pre></div>
+</div>
+<p>To run the tests, install <a class="reference external" href="https://nose.readthedocs.org">nose</a> and run</p>
+<div class="highlight-python"><div class="highlight"><pre>nosetests -v hic
+</pre></div>
+</div>
+</div>
+<div class="section" id="simple-examples">
+<h2>Simple examples<a class="headerlink" href="#simple-examples" title="Permalink to this headline">¶</a></h2>
+<p>Here are a few quick examples of what <tt class="docutils literal"><span class="pre">hic</span></tt> can do.</p>
+<p>Calculate flow cumulants:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">hic</span> <span class="kn">import</span> <span class="n">flow</span>
+
+<span class="n">vnk</span> <span class="o">=</span> <span class="n">flow</span><span class="o">.</span><span class="n">FlowCumulant</span><span class="p">(</span><span class="n">mult</span><span class="p">,</span> <span class="p">{</span><span class="mi">2</span><span class="p">:</span> <span class="n">q2</span><span class="p">,</span> <span class="mi">3</span><span class="p">:</span> <span class="n">q3</span><span class="p">})</span>
+<span class="n">v22</span> <span class="o">=</span> <span class="n">vnk</span><span class="o">.</span><span class="n">flow</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Randomly sample events with specified flows:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">phi</span> <span class="o">=</span> <span class="n">flow</span><span class="o">.</span><span class="n">sample_flow_pdf</span><span class="p">(</span><span class="n">mult</span><span class="p">,</span> <span class="n">vn</span><span class="o">=</span><span class="p">(</span><span class="n">v2</span><span class="p">,</span> <span class="n">v3</span><span class="p">))</span>
+</pre></div>
+</div>
+<p>Calculate initial condition eccentricities:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">hic</span> <span class="kn">import</span> <span class="n">initial</span>
+
+<span class="n">ic</span> <span class="o">=</span> <span class="n">initial</span><span class="o">.</span><span class="n">IC</span><span class="p">(</span><span class="n">profile</span><span class="p">,</span> <span class="n">dxy</span><span class="p">)</span>
+<span class="n">e2</span> <span class="o">=</span> <span class="n">ic</span><span class="o">.</span><span class="n">ecc</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="user-guide">
+<h2>User guide<a class="headerlink" href="#user-guide" title="Permalink to this headline">¶</a></h2>
+<p><tt class="docutils literal"><span class="pre">hic</span></tt> consists of several logically distinct modules.
+Each has a tutorial with examples and an API reference.</p>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="flow.html">Anisotropic flow</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="flow.html#the-flow-vector">The flow vector</a></li>
+<li class="toctree-l2"><a class="reference internal" href="flow.html#flow-cumulants">Flow cumulants</a></li>
+<li class="toctree-l2"><a class="reference internal" href="flow.html#random-sampling">Random sampling</a></li>
+<li class="toctree-l2"><a class="reference internal" href="flow.html#module-hic.flow">Reference</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="initial.html">Initial conditions</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="initial.html#eccentricity-harmonics">Eccentricity harmonics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="initial.html#module-hic.initial">Reference</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div class="section" id="contributing">
+<span id="id1"></span><h2>Contributing<a class="headerlink" href="#contributing" title="Permalink to this headline">¶</a></h2>
+<p><tt class="docutils literal"><span class="pre">hic</span></tt> is a community project&#8212;all heavy-ion physicists are encouraged to contribute!
+Anything is welcome, from a small code snippet to a completely new module to an extra example for the docs.
+Here&#8217;s a short wish list:</p>
+<ul class="simple">
+<li>flow cumulant statistical error</li>
+<li>differential flow</li>
+<li>input/output for common formats (e.g. UrQMD)</li>
+<li>an HBT module</li>
+<li>a heavy-flavor module</li>
+</ul>
+<p>All code should be <span class="target" id="index-0"></span><a class="pep reference external" href="http://www.python.org/dev/peps/pep-0008"><strong>PEP 8</strong></a>-compliant (check with <a class="reference external" href="http://flake8.readthedocs.org">flake8</a>) and have high-coverage unit tests (using <a class="reference external" href="https://nose.readthedocs.org">nose</a>) and documentation (for <a class="reference external" href="http://sphinx-doc.org">sphinx</a>).
+See existing code for examples of how to write tests and docs.</p>
+<p>Submit contributions through a github <a class="reference external" href="https://github.com/jbernhard/hic/pulls">pull request</a>.</p>
+</div>
+</div>
+
+
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="flow.html" class="btn btn-neutral float-right" title="Anisotropic flow"/>Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2015 Jonah Bernhard.
+    </p>
+  </div>
+
+  <a href="https://github.com/snide/sphinx_rtd_theme">Sphinx theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'0.1.dev0',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+      <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

@@ -1,0 +1,373 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Anisotropic flow &mdash; hic 0.1.dev0 documentation</title>
+  
+
+  
+  
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+    <link rel="top" title="hic 0.1.dev0 documentation" href="index.html"/>
+        <link rel="next" title="Initial conditions" href="initial.html"/>
+        <link rel="prev" title="hic" href="index.html"/> 
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.6.2/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-nav-search">
+        <a href="index.html" class="fa fa-home"> hic</a>
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+        
+        
+            <ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="">Anisotropic flow</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#the-flow-vector">The flow vector</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#flow-cumulants">Flow cumulants</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#random-sampling">Random sampling</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-hic.flow">Reference</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="initial.html">Initial conditions</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="initial.html#eccentricity-harmonics">Eccentricity harmonics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="initial.html#module-hic.initial">Reference</a></li>
+</ul>
+</li>
+</ul>
+
+        
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="index.html">hic</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="index.html">Docs</a> &raquo;</li>
+      
+    <li>Anisotropic flow</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          <a href="https://github.com/jbernhard/hic/blob/master/doc/flow.rst" class="fa fa-github"> Edit on GitHub</a>
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main">
+            
+  <div class="section" id="anisotropic-flow">
+<h1>Anisotropic flow<a class="headerlink" href="#anisotropic-flow" title="Permalink to this headline">¶</a></h1>
+<p>The <tt class="docutils literal"><span class="pre">flow</span></tt> module handles anisotropic flow coefficients <span class="math">\(v_n\)</span> and related tasks.</p>
+<p>Flows <span class="math">\(v_n\)</span> are the Fourier coefficients of the transverse momentum distribution:</p>
+<div class="math">
+\[\frac{dN}{d\phi} = \frac{1}{2\pi} \biggl[ 1 + \sum_{n=1}^\infty 2v_n\cos n(\phi - \Psi_\text{RP}) \biggr],\]</div>
+<p>where <span class="math">\(\phi\)</span> is the azimuthal angle of transverse momentum, <span class="math">\(n\)</span> is the order of anisotropy, and <span class="math">\(\Psi_\text{RP}\)</span> is the reaction plane angle.
+The coefficients are</p>
+<div class="math">
+\[v_n = \langle \cos n(\phi - \Psi_\text{RP}) \rangle\]</div>
+<p>where the average is over all particles and events.</p>
+<div class="section" id="the-flow-vector">
+<h2>The flow vector<a class="headerlink" href="#the-flow-vector" title="Permalink to this headline">¶</a></h2>
+<p>The complex flow vector for an event is</p>
+<div class="math">
+\[Q_n = \sum_{i=1}^M e^{in\phi_i}.\]</div>
+<p>Flow vectors can be calculated in <tt class="docutils literal"><span class="pre">hic</span></tt> with <tt class="docutils literal"><span class="pre">hic.flow.qn</span></tt>.
+First, let&#8217;s generate some random angles:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+<span class="n">phi</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>And now calculate <span class="math">\(Q_2\)</span>:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">hic</span> <span class="kn">import</span> <span class="n">flow</span>
+<span class="n">q2</span> <span class="o">=</span> <span class="n">flow</span><span class="o">.</span><span class="n">qn</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="n">phi</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>We can also do multiple <span class="math">\(Q_n\)</span> at once:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">q2</span><span class="p">,</span> <span class="n">q3</span><span class="p">,</span> <span class="n">q4</span> <span class="o">=</span> <span class="n">flow</span><span class="o">.</span><span class="n">qn</span><span class="p">((</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span> <span class="n">phi</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="flow-cumulants">
+<h2>Flow cumulants<a class="headerlink" href="#flow-cumulants" title="Permalink to this headline">¶</a></h2>
+<p>Multi-particle flow cumulants are implemented in the class <tt class="docutils literal"><span class="pre">hic.flow.FlowCumulant</span></tt> using the direct <em>Q</em>-cumulant method from <a class="reference external" href="http://inspirehep.net/record/871528">Bilandzic (2010)</a>.</p>
+</div>
+<div class="section" id="random-sampling">
+<h2>Random sampling<a class="headerlink" href="#random-sampling" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-hic.flow">
+<span id="reference"></span><h2>Reference<a class="headerlink" href="#module-hic.flow" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="hic.flow.qn">
+<tt class="descclassname">hic.flow.</tt><tt class="descname">qn</tt><big>(</big><em>n</em>, <em>phi</em><big>)</big><a class="headerlink" href="#hic.flow.qn" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate the complex flow vector <span class="math">\(Q_n\)</span>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>n</strong> (<em>int or iterable of ints</em>) &#8211; Harmonic(s) <span class="math">\(n\)</span> to calculate.</li>
+<li><strong>phi</strong> (<em>array-like</em>) &#8211; Azimuthal angles.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">A single complex number if only one <tt class="docutils literal"><span class="pre">n</span></tt> was given or a complex array
+for multiple <tt class="docutils literal"><span class="pre">n</span></tt>.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="hic.flow.flow_pdf">
+<tt class="descclassname">hic.flow.</tt><tt class="descname">flow_pdf</tt><big>(</big><em>phi</em>, <em>vn=None</em>, <em>psin=0</em><big>)</big><a class="headerlink" href="#hic.flow.flow_pdf" title="Permalink to this definition">¶</a></dt>
+<dd><p>Evaluate the flow probability density function <span class="math">\(dN/d\phi\)</span>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>phi</strong> (<em>float or array-like</em>) &#8211; Azimuthal angle(s) <span class="math">\(\phi\)</span>.</li>
+<li><strong>vn</strong> (<em>float or iterable of floats</em>) &#8211; (optional)
+Flow coefficients <span class="math">\(v_n\)</span>, starting with <span class="math">\(v_2\)</span>.</li>
+<li><strong>psin</strong> (<em>float or iterable of floats</em>) &#8211; (optional)
+Event plane angles <span class="math">\(\Psi_n\)</span> matching <tt class="docutils literal"><span class="pre">vn</span></tt>.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">The flow PDF evaluated at <tt class="docutils literal"><span class="pre">phi</span></tt>.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="hic.flow.sample_flow_pdf">
+<tt class="descclassname">hic.flow.</tt><tt class="descname">sample_flow_pdf</tt><big>(</big><em>multiplicity</em>, <em>vn=None</em>, <em>psin=0</em><big>)</big><a class="headerlink" href="#hic.flow.sample_flow_pdf" title="Permalink to this definition">¶</a></dt>
+<dd><p>Randomly sample azimuthal angles <span class="math">\(\phi\)</span> with specified flows.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>multiplicity</strong> (<em>int</em>) &#8211; Number to sample.</li>
+<li><strong>vn</strong> (<em>float or iterable of floats</em>) &#8211; (optional)
+Flow coefficients <span class="math">\(v_n\)</span>, starting with <span class="math">\(v_2\)</span>.
+If not given, uniformly sample angles from <span class="math">\([-\pi, \pi)\)</span>.</li>
+<li><strong>psin</strong> (<em>float or iterable of floats</em>) &#8211; (optional)
+Event plane angles <span class="math">\(\Psi_n\)</span> matching <tt class="docutils literal"><span class="pre">vn</span></tt>.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">Array of angles.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="class">
+<dt id="hic.flow.FlowCumulant">
+<em class="property">class </em><tt class="descclassname">hic.flow.</tt><tt class="descname">FlowCumulant</tt><big>(</big><em>multiplicities</em>, <em>qn</em><big>)</big><a class="headerlink" href="#hic.flow.FlowCumulant" title="Permalink to this definition">¶</a></dt>
+<dd><p>Multi-particle flow correlations and cumulants for an ensemble of events.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>multiplicities</strong> (<em>array-like</em>) &#8211; Event-by-event multiplicities.</li>
+<li><strong>qn</strong> (<em>dict or iterable of pairs</em>) &#8211; Event-by-event <span class="math">\(Q_n\)</span> vectors, either a dict of the form
+<tt class="docutils literal"><span class="pre">{n:</span> <span class="pre">qn}</span></tt> or an iterable of pairs <tt class="docutils literal"><span class="pre">(n,</span> <span class="pre">qn)</span></tt>, where each <tt class="docutils literal"><span class="pre">n</span></tt> is an
+integer and each <tt class="docutils literal"><span class="pre">qn</span></tt> is an array of event-by-event flow vectors.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="hic.flow.FlowCumulant.correlation">
+<tt class="descname">correlation</tt><big>(</big><em>n</em>, <em>k</em><big>)</big><a class="headerlink" href="#hic.flow.FlowCumulant.correlation" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate <span class="math">\(\langle k \rangle_n\)</span>,
+the <span class="math">\(k\)</span>-particle correlation function for <span class="math">\(n\)</span>th-order anisotropy.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>n</strong> (<em>int</em>) &#8211; Flow order.</li>
+<li><strong>k</strong> (<em>int</em>) &#8211; Correlation order.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="hic.flow.FlowCumulant.cumulant">
+<tt class="descname">cumulant</tt><big>(</big><em>n</em>, <em>k</em>, <em>error=False</em><big>)</big><a class="headerlink" href="#hic.flow.FlowCumulant.cumulant" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate <span class="math">\(c_n\{k\}\)</span>,
+the <span class="math">\(k\)</span>-particle cumulant for <span class="math">\(n\)</span>th-order anisotropy.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>n</strong> (<em>int</em>) &#8211; Flow order.</li>
+<li><strong>k</strong> (<em>int</em>) &#8211; Correlation order.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="hic.flow.FlowCumulant.flow">
+<tt class="descname">flow</tt><big>(</big><em>n</em>, <em>k</em>, <em>error=False</em>, <em>imaginary='nan'</em><big>)</big><a class="headerlink" href="#hic.flow.FlowCumulant.flow" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate <span class="math">\(v_n\{k\}\)</span>,
+the estimate of flow coefficient <span class="math">\(v_n\)</span> from the <span class="math">\(k\)</span>-particle cumulant.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>n</strong> (<em>int</em>) &#8211; Flow order.</li>
+<li><strong>k</strong> (<em>int</em>) &#8211; Correlation order.</li>
+<li><strong>imaginary</strong> (<em>str</em>) &#8211; <p>(optional)
+Determines behavior when the computed flow is imaginary:</p>
+<ul>
+<li><tt class="docutils literal"><span class="pre">'nan'</span></tt> (default) &#8211; Return NaN and raise a <tt class="docutils literal"><span class="pre">RuntimeWarning</span></tt>.</li>
+<li><tt class="docutils literal"><span class="pre">'negative'</span></tt> &#8211; Return the negative absolute value.</li>
+<li><tt class="docutils literal"><span class="pre">'zero'</span></tt> &#8211; Return <tt class="docutils literal"><span class="pre">0.0</span></tt>.</li>
+</ul>
+</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+</div>
+
+
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="initial.html" class="btn btn-neutral float-right" title="Initial conditions"/>Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="index.html" class="btn btn-neutral" title="hic"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2015 Jonah Bernhard.
+    </p>
+  </div>
+
+  <a href="https://github.com/snide/sphinx_rtd_theme">Sphinx theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'0.1.dev0',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+      <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

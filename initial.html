@@ -1,0 +1,226 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Initial conditions &mdash; hic 0.1.dev0 documentation</title>
+  
+
+  
+  
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+    <link rel="top" title="hic 0.1.dev0 documentation" href="index.html"/>
+        <link rel="prev" title="Anisotropic flow" href="flow.html"/> 
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.6.2/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-nav-search">
+        <a href="index.html" class="fa fa-home"> hic</a>
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+        
+        
+            <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="flow.html">Anisotropic flow</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="flow.html#the-flow-vector">The flow vector</a></li>
+<li class="toctree-l2"><a class="reference internal" href="flow.html#flow-cumulants">Flow cumulants</a></li>
+<li class="toctree-l2"><a class="reference internal" href="flow.html#random-sampling">Random sampling</a></li>
+<li class="toctree-l2"><a class="reference internal" href="flow.html#module-hic.flow">Reference</a></li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="current reference internal" href="">Initial conditions</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#eccentricity-harmonics">Eccentricity harmonics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-hic.initial">Reference</a></li>
+</ul>
+</li>
+</ul>
+
+        
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="index.html">hic</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="index.html">Docs</a> &raquo;</li>
+      
+    <li>Initial conditions</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          <a href="https://github.com/jbernhard/hic/blob/master/doc/initial.rst" class="fa fa-github"> Edit on GitHub</a>
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main">
+            
+  <div class="section" id="initial-conditions">
+<h1>Initial conditions<a class="headerlink" href="#initial-conditions" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="eccentricity-harmonics">
+<h2>Eccentricity harmonics<a class="headerlink" href="#eccentricity-harmonics" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-hic.initial">
+<span id="reference"></span><h2>Reference<a class="headerlink" href="#module-hic.initial" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="hic.initial.IC">
+<em class="property">class </em><tt class="descclassname">hic.initial.</tt><tt class="descname">IC</tt><big>(</big><em>profile</em>, <em>dxy</em><big>)</big><a class="headerlink" href="#hic.initial.IC" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initial condition entropy or energy density profile.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>profile</strong> (<em>array-like</em>) &#8211; The IC profile as a block-style grid.</li>
+<li><strong>dxy</strong> (<em>float or pair of floats</em>) &#8211; Size of each grid cell in fm, either a single value <tt class="docutils literal"><span class="pre">dxy</span> <span class="pre">=</span> <span class="pre">dx</span> <span class="pre">=</span> <span class="pre">dy</span></tt>
+or a pair <tt class="docutils literal"><span class="pre">dxy</span> <span class="pre">=</span> <span class="pre">(dx,</span> <span class="pre">dy)</span></tt>.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="hic.initial.IC.cm">
+<tt class="descname">cm</tt><big>(</big><big>)</big><a class="headerlink" href="#hic.initial.IC.cm" title="Permalink to this definition">¶</a></dt>
+<dd><p>Center of mass coordinates, assuming the middle of the profile is
+(0, 0).</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="hic.initial.IC.ecc">
+<tt class="descname">ecc</tt><big>(</big><em>n</em><big>)</big><a class="headerlink" href="#hic.initial.IC.ecc" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate eccentricity harmonic <span class="math">\(\varepsilon_n\)</span>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>n</strong> (<em>int</em>) &#8211; Eccentricity order.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="hic.initial.IC.sum">
+<tt class="descname">sum</tt><big>(</big><big>)</big><a class="headerlink" href="#hic.initial.IC.sum" title="Permalink to this definition">¶</a></dt>
+<dd><p>Total entropy or energy.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+</div>
+
+
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+      
+        <a href="flow.html" class="btn btn-neutral" title="Anisotropic flow"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2015 Jonah Bernhard.
+    </p>
+  </div>
+
+  <a href="https://github.com/snide/sphinx_rtd_theme">Sphinx theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'0.1.dev0',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+      <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>
