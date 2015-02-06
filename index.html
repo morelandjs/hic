@@ -14,7 +14,7 @@
   
 
   
-  <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
+  <link href='https://fonts.googleapis.com/css?family=Lato:400,700,400italic,700italic|Roboto+Slab:400,700|Inconsolata:400,700&subset=latin,cyrillic' rel='stylesheet' type='text/css'>
 
   
   
@@ -43,9 +43,12 @@
     
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-nav-search">
-        <a href="#" class="fa fa-home"> hic</a>
-        <div role="search">
-  <form id ="rtd-search-form" class="wy-form" action="search.html" method="get">
+        
+          <a href="#" class="fa fa-home"> hic</a>
+        
+        
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
@@ -55,8 +58,9 @@
 
       <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
         
-        
-            <ul>
+          
+          
+              <ul>
 <li class="toctree-l1"><a class="reference internal" href="flow.html">Anisotropic flow</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="flow.html#the-flow-vector">The flow vector</a></li>
 <li class="toctree-l2"><a class="reference internal" href="flow.html#flow-cumulants">Flow cumulants</a></li>
@@ -71,6 +75,7 @@
 </li>
 </ul>
 
+          
         
       </div>
       &nbsp;
@@ -95,13 +100,13 @@
     <li>hic</li>
       <li class="wy-breadcrumbs-aside">
         
-          <a href="https://github.com/jbernhard/hic/blob/master/doc/index.rst" class="fa fa-github"> Edit on GitHub</a>
+          <a href="https://github.com/jbernhard/hic/blob/master/doc/index" class="fa fa-github"> Edit on GitHub</a>
         
       </li>
   </ul>
   <hr/>
 </div>
-          <div role="main">
+          <div role="main" class="document">
             
   <div class="section" id="hic">
 <h1>hic<a class="headerlink" href="#hic" title="Permalink to this headline">¶</a></h1>
@@ -114,12 +119,7 @@ It&#8217;s a community project designed to facilitate computational heavy-ion re
 <p>Requirements: Python 2.7 or 3.3+ with <a class="reference external" href="http://www.numpy.org">numpy</a>.</p>
 <p><tt class="docutils literal"><span class="pre">hic</span></tt> is prerelease software.
 You can install the development version with <a class="reference external" href="https://pip.pypa.io">pip</a>:</p>
-<div class="highlight-python"><div class="highlight"><pre>pip install git+https://github.com/jbernhard/hic#egg=hic
-</pre></div>
-</div>
-<p>Or, if you want to edit the code, clone the repository and install in editable mode:</p>
-<div class="highlight-python"><div class="highlight"><pre>git clone git@github.com:jbernhard/hic.git
-pip install [--user] -e hic
+<div class="highlight-python"><div class="highlight"><pre>pip install git+https://github.com/jbernhard/hic.git
 </pre></div>
 </div>
 <p>To run the tests, install <a class="reference external" href="https://nose.readthedocs.org">nose</a> and run</p>
@@ -182,9 +182,32 @@ Here&#8217;s a short wish list:</p>
 <li>an HBT module</li>
 <li>a heavy-flavor module</li>
 </ul>
-<p>All code should be <span class="target" id="index-0"></span><a class="pep reference external" href="http://www.python.org/dev/peps/pep-0008"><strong>PEP 8</strong></a>-compliant (check with <a class="reference external" href="http://flake8.readthedocs.org">flake8</a>) and have high-coverage unit tests (using <a class="reference external" href="https://nose.readthedocs.org">nose</a>) and documentation (for <a class="reference external" href="http://sphinx-doc.org">sphinx</a>).
-See existing code for examples of how to write tests and docs.</p>
-<p>Submit contributions through a github <a class="reference external" href="https://github.com/jbernhard/hic/pulls">pull request</a>.</p>
+<p>Submit contributions through the github fork &amp; pull request system.
+Create a <a class="reference external" href="https://help.github.com/articles/fork-a-repo">fork</a>, clone it, and install <tt class="docutils literal"><span class="pre">hic</span></tt> in editable mode:</p>
+<div class="highlight-python"><div class="highlight"><pre>git clone git@github.com:USERNAME/hic.git
+pip install --user -e hic
+</pre></div>
+</div>
+<p>Please follow these general coding guidelines:</p>
+<ul>
+<li><p class="first">Mimic the existing code structure and style.
+If it makes logical sense, create a new module with tests and docs, e.g. a module <tt class="docutils literal"><span class="pre">hello</span></tt> should have source file <tt class="docutils literal"><span class="pre">hic/hello.py</span></tt>, tests <tt class="docutils literal"><span class="pre">hic/test/test_hello.py</span></tt>, and docs <tt class="docutils literal"><span class="pre">doc/hello.rst</span></tt>.</p>
+</li>
+<li><p class="first">Write descriptive docstrings and examples.
+Docs are generated by <a class="reference external" href="http://sphinx-doc.org">sphinx</a>.</p>
+</li>
+<li><p class="first">Write high-coverage unit tests.
+Install <a class="reference external" href="https://nose.readthedocs.org">nose</a> and <a class="reference external" href="http://nedbatchelder.com/code/coverage">coverage</a>, then the easiest way to simultaneously run tests and check coverage is</p>
+<div class="highlight-python"><div class="highlight"><pre>nosetests -v --with-coverage --cover-package=hic
+</pre></div>
+</div>
+</li>
+<li><p class="first">Follow the <span class="target" id="index-0"></span><a class="pep reference external" href="http://www.python.org/dev/peps/pep-0008"><strong>PEP 8</strong></a> style guide.
+Check for errors with <a class="reference external" href="http://flake8.readthedocs.org">flake8</a>.</p>
+</li>
+<li><p class="first">Make topic branches and submit a <a class="reference external" href="https://github.com/jbernhard/hic/pulls">pull request</a> for each branch.</p>
+</li>
+</ul>
 </div>
 </div>
 
@@ -194,7 +217,7 @@ See existing code for examples of how to write tests and docs.</p>
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="flow.html" class="btn btn-neutral float-right" title="Anisotropic flow"/>Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="flow.html" class="btn btn-neutral float-right" title="Anisotropic flow">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
     </div>
@@ -208,7 +231,8 @@ See existing code for examples of how to write tests and docs.</p>
     </p>
   </div>
 
-  <a href="https://github.com/snide/sphinx_rtd_theme">Sphinx theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+  
 </footer>
         </div>
       </div>
