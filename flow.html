@@ -66,7 +66,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#the-flow-vector">The flow vector</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#flow-cumulants">Flow cumulants</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#random-sampling">Random sampling</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#module-hic.flow">Reference</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#reference">Reference</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="initial.html">Initial conditions</a><ul>
@@ -133,34 +133,121 @@ First, let&#8217;s generate some random angles:</p>
 </div>
 <p>And now calculate <span class="math">\(Q_2\)</span>:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">hic</span> <span class="kn">import</span> <span class="n">flow</span>
-<span class="n">q2</span> <span class="o">=</span> <span class="n">flow</span><span class="o">.</span><span class="n">qn</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="n">phi</span><span class="p">)</span>
+<span class="n">q2</span> <span class="o">=</span> <span class="n">flow</span><span class="o">.</span><span class="n">qn</span><span class="p">(</span><span class="n">phi</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>We can also do multiple <span class="math">\(Q_n\)</span> at once:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="n">q2</span><span class="p">,</span> <span class="n">q3</span><span class="p">,</span> <span class="n">q4</span> <span class="o">=</span> <span class="n">flow</span><span class="o">.</span><span class="n">qn</span><span class="p">((</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span> <span class="n">phi</span><span class="p">)</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">q2</span><span class="p">,</span> <span class="n">q3</span><span class="p">,</span> <span class="n">q4</span> <span class="o">=</span> <span class="n">flow</span><span class="o">.</span><span class="n">qn</span><span class="p">(</span><span class="n">phi</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 <div class="section" id="flow-cumulants">
 <h2>Flow cumulants<a class="headerlink" href="#flow-cumulants" title="Permalink to this headline">¶</a></h2>
-<p>Multi-particle flow cumulants are implemented in the class <tt class="docutils literal"><span class="pre">hic.flow.FlowCumulant</span></tt> using the direct <em>Q</em>-cumulant method from <a class="reference external" href="http://inspirehep.net/record/871528">Bilandzic (2010)</a>.</p>
+<p>Multi-particle flow cumulants are implemented in the class <tt class="docutils literal"><span class="pre">hic.flow.FlowCumulant</span></tt> using the direct <em>Q</em>-cumulant method from <a class="reference external" href="http://inspirehep.net/record/871528">Bilandzic (2010)</a>, which calculates cumulants from event-by-event multiplicities and <span class="math">\(Q_n\)</span> vectors.</p>
+<p>Let&#8217;s generate some toy data:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="c"># 1000x1000 array, where each row is an &quot;event&quot; of 1000 particles</span>
+<span class="n">phi</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">1000</span><span class="o">*</span><span class="mi">1000</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">1000</span><span class="p">,</span> <span class="mi">1000</span><span class="p">)</span>
+<span class="n">mult</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">size</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">phi</span><span class="p">)</span>
+<span class="n">q2</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">flow</span><span class="o">.</span><span class="n">qn</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">phi</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Then create a <tt class="docutils literal"><span class="pre">FlowCumulant</span></tt>:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">vnk</span> <span class="o">=</span> <span class="n">flow</span><span class="o">.</span><span class="n">FlowCumulant</span><span class="p">(</span><span class="n">mult</span><span class="p">,</span> <span class="n">q2</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>And now we can calculate flow correlations and cumulants.
+The correlation function <span class="math">\(\langle 2 \rangle_2\)</span>:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">corr22</span> <span class="o">=</span> <span class="n">vnk</span><span class="o">.</span><span class="n">correlation</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The cumulant <span class="math">\(c_2\{2\}\)</span>:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">c22</span> <span class="o">=</span> <span class="n">vnk</span><span class="o">.</span><span class="n">cumulant</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The flow coefficient <span class="math">\(v_2\{2\}\)</span> (depending on the random seed this may return <tt class="docutils literal"><span class="pre">NaN</span></tt>):</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">v22</span> <span class="o">=</span> <span class="n">vnk</span><span class="o">.</span><span class="n">flow</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>That&#8217;s all we can calculate with the current data since we only have <span class="math">\(Q_2\)</span>.
+In general, flow coefficient <span class="math">\(v_n\{k\}\)</span> requires <span class="math">\(Q_n, Q_{2n}, \ldots, Q_{nk/2}\)</span>, e.g.</p>
+<ul class="simple">
+<li><span class="math">\(v_2\{2\}\)</span> requires only <span class="math">\(Q_2\)</span></li>
+<li><span class="math">\(v_3\{4\}\)</span> requires <span class="math">\(Q_3\)</span>, <span class="math">\(Q_6\)</span></li>
+<li><span class="math">\(v_2\{6\}\)</span> requires <span class="math">\(Q_2\)</span>, <span class="math">\(Q_4\)</span>, <span class="math">\(Q_6\)</span></li>
+</ul>
+<p>If you attempt to calculate something and don&#8217;t have sufficient data, you&#8217;ll get an exception:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">vnk</span><span class="o">.</span><span class="n">flow</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>  <span class="c"># raises ValueError</span>
+</pre></div>
+</div>
+<p>Let&#8217;s calculate some higher-order flow vectors and use them:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">q3</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">flow</span><span class="o">.</span><span class="n">qn</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">phi</span><span class="p">)</span>
+<span class="n">q4</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">flow</span><span class="o">.</span><span class="n">qn</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">phi</span><span class="p">)</span>
+<span class="n">vnk</span> <span class="o">=</span> <span class="n">flow</span><span class="o">.</span><span class="n">FlowCumulant</span><span class="p">(</span><span class="n">mult</span><span class="p">,</span> <span class="n">q2</span><span class="p">,</span> <span class="n">q3</span><span class="p">,</span> <span class="n">q4</span><span class="p">)</span>
+<span class="n">v32</span> <span class="o">=</span> <span class="n">vnk</span><span class="o">.</span><span class="n">flow</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>  <span class="c"># works now</span>
+<span class="n">v24</span> <span class="o">=</span> <span class="n">vnk</span><span class="o">.</span><span class="n">flow</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>  <span class="c"># works</span>
+<span class="n">v42</span> <span class="o">=</span> <span class="n">vnk</span><span class="o">.</span><span class="n">flow</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>  <span class="c"># works</span>
+<span class="n">v52</span> <span class="o">=</span> <span class="n">vnk</span><span class="o">.</span><span class="n">flow</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>  <span class="c"># ValueError (no q5!)</span>
+</pre></div>
+</div>
+<p>There are multiple ways to pass flow vector data to the <tt class="docutils literal"><span class="pre">FlowCumulant</span></tt> class.
+So far we&#8217;ve used the shorthand syntax, where we list <tt class="docutils literal"><span class="pre">qn</span></tt> in order starting with <tt class="docutils literal"><span class="pre">q2</span></tt>.
+You can skip a <tt class="docutils literal"><span class="pre">qn</span></tt> by specifying <tt class="docutils literal"><span class="pre">None</span></tt>, for example if you have <tt class="docutils literal"><span class="pre">q2</span></tt> and <tt class="docutils literal"><span class="pre">q4</span></tt> but not <tt class="docutils literal"><span class="pre">q3</span></tt>:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">flow</span><span class="o">.</span><span class="n">FlowCumulant</span><span class="p">(</span><span class="n">mult</span><span class="p">,</span> <span class="n">q2</span><span class="p">,</span> <span class="bp">None</span><span class="p">,</span> <span class="n">q4</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>You can also use keyword arguments in any order, e.g.:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">flow</span><span class="o">.</span><span class="n">FlowCumulant</span><span class="p">(</span><span class="n">mult</span><span class="p">,</span> <span class="n">q2</span><span class="o">=</span><span class="n">q2</span><span class="p">,</span> <span class="n">q4</span><span class="o">=</span><span class="n">q4</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Note that the only way to pass <tt class="docutils literal"><span class="pre">q1</span></tt> is through a keyword argument.
+Here are some more examples&#8212;these are all equivalent:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">q2</span><span class="p">,</span> <span class="n">q3</span><span class="p">,</span> <span class="n">q4</span><span class="p">,</span> <span class="bp">None</span><span class="p">,</span> <span class="n">q6</span>
+<span class="n">q2</span><span class="p">,</span> <span class="n">q3</span><span class="p">,</span> <span class="n">q4</span><span class="p">,</span> <span class="n">q6</span><span class="o">=</span><span class="n">q6</span>
+<span class="n">q2</span><span class="p">,</span> <span class="n">q3</span><span class="o">=</span><span class="n">q3</span><span class="p">,</span> <span class="n">q4</span><span class="o">=</span><span class="n">q4</span><span class="p">,</span> <span class="n">q6</span><span class="o">=</span><span class="n">q6</span>
+<span class="n">q6</span><span class="o">=</span><span class="n">q6</span><span class="p">,</span> <span class="n">q4</span><span class="o">=</span><span class="n">q4</span><span class="p">,</span> <span class="n">q3</span><span class="o">=</span><span class="n">q3</span><span class="p">,</span> <span class="n">q2</span><span class="o">=</span><span class="n">q2</span>
+</pre></div>
+</div>
 </div>
 <div class="section" id="random-sampling">
 <h2>Random sampling<a class="headerlink" href="#random-sampling" title="Permalink to this headline">¶</a></h2>
+<p>In the last section we sampled random azimuthal angles uniformly from <span class="math">\([-\pi, \pi)\)</span>, i.e. from a fictitious event with <em>zero</em> flow.
+The function <tt class="docutils literal"><span class="pre">hic.flow.sample_flow_pdf</span></tt> generates random angles with <em>nonzero</em> flow by sampling <span class="math">\(dN/d\phi\)</span> as a probability density function (PDF).
+For example to sample 1000 angles with <span class="math">\(v_2 = 0.1\)</span>:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">phi</span> <span class="o">=</span> <span class="n">flow</span><span class="o">.</span><span class="n">sample_flow_pdf</span><span class="p">(</span><span class="mi">1000</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">)</span>
+</pre></div>
 </div>
-<div class="section" id="module-hic.flow">
-<span id="reference"></span><h2>Reference<a class="headerlink" href="#module-hic.flow" title="Permalink to this headline">¶</a></h2>
-<dl class="function">
+<p>The syntax for specifying <span class="math">\(v_n\)</span> is the same as <span class="math">\(Q_n\)</span> for <tt class="docutils literal"><span class="pre">FlowCumulant</span></tt>: you can use the shorthand list starting from <tt class="docutils literal"><span class="pre">v2</span></tt> or keyword arguments.
+These are all equivalent:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="mf">0.1</span><span class="p">,</span> <span class="bp">None</span><span class="p">,</span> <span class="mf">0.02</span>
+<span class="mf">0.1</span><span class="p">,</span> <span class="n">v4</span><span class="o">=</span><span class="mf">0.02</span>
+<span class="n">v2</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">v4</span><span class="o">=</span><span class="mf">0.02</span>
+</pre></div>
+</div>
+<p>Finally, the function <tt class="docutils literal"><span class="pre">hic.flow.flow_pdf</span></tt> evaluates <span class="math">\(dN/d\phi\)</span> rather than sampling it:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">phi</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">,</span> <span class="mi">1000</span><span class="p">)</span>
+<span class="n">dndphi</span> <span class="o">=</span> <span class="n">flow</span><span class="o">.</span><span class="n">flow_pdf</span><span class="p">(</span><span class="n">phi</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.05</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The syntax for inputting <span class="math">\(v_n\)</span> is the same as for <tt class="docutils literal"><span class="pre">sample_flow_pdf</span></tt>.</p>
+</div>
+<div class="section" id="reference">
+<h2>Reference<a class="headerlink" href="#reference" title="Permalink to this headline">¶</a></h2>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">The <tt class="docutils literal"><span class="pre">flow</span></tt> module makes repeated use of the <tt class="docutils literal"><span class="pre">*args,</span> <span class="pre">**kwargs</span></tt> idiom.
+See <a class="reference external" href="http://stackoverflow.com/a/36908">stackoverflow</a> for an explanation and the user guide above for usage examples.</p>
+</div>
+<span class="target" id="module-hic.flow"></span><dl class="function">
 <dt id="hic.flow.qn">
-<tt class="descclassname">hic.flow.</tt><tt class="descname">qn</tt><big>(</big><em>n</em>, <em>phi</em><big>)</big><a class="headerlink" href="#hic.flow.qn" title="Permalink to this definition">¶</a></dt>
+<tt class="descclassname">hic.flow.</tt><tt class="descname">qn</tt><big>(</big><em>phi</em>, <em>*n</em><big>)</big><a class="headerlink" href="#hic.flow.qn" title="Permalink to this definition">¶</a></dt>
 <dd><p>Calculate the complex flow vector <span class="math">\(Q_n\)</span>.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>n</strong> (<em>int or iterable of ints</em>) &#8211; Harmonic(s) <span class="math">\(n\)</span> to calculate.</li>
 <li><strong>phi</strong> (<em>array-like</em>) &#8211; Azimuthal angles.</li>
+<li><strong>n</strong> (<em>int</em>) &#8211; One or more harmonics to calculate.</li>
 </ul>
 </td>
 </tr>
@@ -174,18 +261,16 @@ for multiple <tt class="docutils literal"><span class="pre">n</span></tt>.</p>
 
 <dl class="function">
 <dt id="hic.flow.flow_pdf">
-<tt class="descclassname">hic.flow.</tt><tt class="descname">flow_pdf</tt><big>(</big><em>phi</em>, <em>vn=None</em>, <em>psin=0</em><big>)</big><a class="headerlink" href="#hic.flow.flow_pdf" title="Permalink to this definition">¶</a></dt>
+<tt class="descclassname">hic.flow.</tt><tt class="descname">flow_pdf</tt><big>(</big><em>phi</em>, <em>*vn</em>, <em>**other_vn</em><big>)</big><a class="headerlink" href="#hic.flow.flow_pdf" title="Permalink to this definition">¶</a></dt>
 <dd><p>Evaluate the flow probability density function <span class="math">\(dN/d\phi\)</span>.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>phi</strong> (<em>float or array-like</em>) &#8211; Azimuthal angle(s) <span class="math">\(\phi\)</span>.</li>
-<li><strong>vn</strong> (<em>float or iterable of floats</em>) &#8211; (optional)
-Flow coefficients <span class="math">\(v_n\)</span>, starting with <span class="math">\(v_2\)</span>.</li>
-<li><strong>psin</strong> (<em>float or iterable of floats</em>) &#8211; (optional)
-Event plane angles <span class="math">\(\Psi_n\)</span> matching <tt class="docutils literal"><span class="pre">vn</span></tt>.</li>
+<li><strong>phi</strong> (<em>array-like</em>) &#8211; Azimuthal angles.</li>
+<li><strong>v2, v3, ...</strong> (<em>float</em>) &#8211; Flow coefficients as positional arguments.</li>
+<li><strong>other_vn</strong> (<em>float</em>) &#8211; Flow coefficients as keyword arguments.</li>
 </ul>
 </td>
 </tr>
@@ -198,23 +283,21 @@ Event plane angles <span class="math">\(\Psi_n\)</span> matching <tt class="docu
 
 <dl class="function">
 <dt id="hic.flow.sample_flow_pdf">
-<tt class="descclassname">hic.flow.</tt><tt class="descname">sample_flow_pdf</tt><big>(</big><em>multiplicity</em>, <em>vn=None</em>, <em>psin=0</em><big>)</big><a class="headerlink" href="#hic.flow.sample_flow_pdf" title="Permalink to this definition">¶</a></dt>
+<tt class="descclassname">hic.flow.</tt><tt class="descname">sample_flow_pdf</tt><big>(</big><em>multiplicity</em>, <em>*vn</em>, <em>**other_vn</em><big>)</big><a class="headerlink" href="#hic.flow.sample_flow_pdf" title="Permalink to this definition">¶</a></dt>
 <dd><p>Randomly sample azimuthal angles <span class="math">\(\phi\)</span> with specified flows.</p>
+<p>To sample uniform <span class="math">\(\phi\)</span>, do not specify any flows.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
 <li><strong>multiplicity</strong> (<em>int</em>) &#8211; Number to sample.</li>
-<li><strong>vn</strong> (<em>float or iterable of floats</em>) &#8211; (optional)
-Flow coefficients <span class="math">\(v_n\)</span>, starting with <span class="math">\(v_2\)</span>.
-If not given, uniformly sample angles from <span class="math">\([-\pi, \pi)\)</span>.</li>
-<li><strong>psin</strong> (<em>float or iterable of floats</em>) &#8211; (optional)
-Event plane angles <span class="math">\(\Psi_n\)</span> matching <tt class="docutils literal"><span class="pre">vn</span></tt>.</li>
+<li><strong>v2, v3, ...</strong> (<em>float</em>) &#8211; Flow coefficients as positional arguments.</li>
+<li><strong>other_vn</strong> (<em>float</em>) &#8211; Flow coefficients as keyword arguments.</li>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">Array of angles.</p>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">Array of sampled angles.</p>
 </td>
 </tr>
 </tbody>
@@ -223,17 +306,20 @@ Event plane angles <span class="math">\(\Psi_n\)</span> matching <tt class="docu
 
 <dl class="class">
 <dt id="hic.flow.FlowCumulant">
-<em class="property">class </em><tt class="descclassname">hic.flow.</tt><tt class="descname">FlowCumulant</tt><big>(</big><em>multiplicities</em>, <em>qn</em><big>)</big><a class="headerlink" href="#hic.flow.FlowCumulant" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><tt class="descclassname">hic.flow.</tt><tt class="descname">FlowCumulant</tt><big>(</big><em>multiplicities</em>, <em>*qn</em>, <em>**other_qn</em><big>)</big><a class="headerlink" href="#hic.flow.FlowCumulant" title="Permalink to this definition">¶</a></dt>
 <dd><p>Multi-particle flow correlations and cumulants for an ensemble of events.</p>
+<p>Each argument must be an array-like object where each element corresponds
+to an event: <tt class="docutils literal"><span class="pre">multiplicities</span></tt> is an array containing event-by-event
+multiplicities, <tt class="docutils literal"><span class="pre">q2</span></tt> is an array of the same size containing the <span class="math">\(Q_2\)</span>
+vectors for the same set of events, and so on.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
 <li><strong>multiplicities</strong> (<em>array-like</em>) &#8211; Event-by-event multiplicities.</li>
-<li><strong>qn</strong> (<em>dict or iterable of pairs</em>) &#8211; Event-by-event <span class="math">\(Q_n\)</span> vectors, either a dict of the form
-<tt class="docutils literal"><span class="pre">{n:</span> <span class="pre">qn}</span></tt> or an iterable of pairs <tt class="docutils literal"><span class="pre">(n,</span> <span class="pre">qn)</span></tt>, where each <tt class="docutils literal"><span class="pre">n</span></tt> is an
-integer and each <tt class="docutils literal"><span class="pre">qn</span></tt> is an array of event-by-event flow vectors.</li>
+<li><strong>q2, q3, ...</strong> (<em>array-like</em>) &#8211; <span class="math">\(Q_n\)</span> vectors as positional arguments.</li>
+<li><strong>other_qn</strong> (<em>array-like</em>) &#8211; <span class="math">\(Q_n\)</span> vectors as keyword arguments.</li>
 </ul>
 </td>
 </tr>

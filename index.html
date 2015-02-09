@@ -65,7 +65,7 @@
 <li class="toctree-l2"><a class="reference internal" href="flow.html#the-flow-vector">The flow vector</a></li>
 <li class="toctree-l2"><a class="reference internal" href="flow.html#flow-cumulants">Flow cumulants</a></li>
 <li class="toctree-l2"><a class="reference internal" href="flow.html#random-sampling">Random sampling</a></li>
-<li class="toctree-l2"><a class="reference internal" href="flow.html#module-hic.flow">Reference</a></li>
+<li class="toctree-l2"><a class="reference internal" href="flow.html#reference">Reference</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="initial.html">Initial conditions</a><ul>
@@ -133,12 +133,12 @@ You can install the development version with <a class="reference external" href=
 <p>Calculate flow cumulants:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">hic</span> <span class="kn">import</span> <span class="n">flow</span>
 
-<span class="n">vnk</span> <span class="o">=</span> <span class="n">flow</span><span class="o">.</span><span class="n">FlowCumulant</span><span class="p">(</span><span class="n">mult</span><span class="p">,</span> <span class="p">{</span><span class="mi">2</span><span class="p">:</span> <span class="n">q2</span><span class="p">,</span> <span class="mi">3</span><span class="p">:</span> <span class="n">q3</span><span class="p">})</span>
+<span class="n">vnk</span> <span class="o">=</span> <span class="n">flow</span><span class="o">.</span><span class="n">FlowCumulant</span><span class="p">(</span><span class="n">mult</span><span class="p">,</span> <span class="n">q2</span><span class="p">,</span> <span class="n">q3</span><span class="p">)</span>
 <span class="n">v22</span> <span class="o">=</span> <span class="n">vnk</span><span class="o">.</span><span class="n">flow</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>Randomly sample events with specified flows:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="n">phi</span> <span class="o">=</span> <span class="n">flow</span><span class="o">.</span><span class="n">sample_flow_pdf</span><span class="p">(</span><span class="n">mult</span><span class="p">,</span> <span class="n">vn</span><span class="o">=</span><span class="p">(</span><span class="n">v2</span><span class="p">,</span> <span class="n">v3</span><span class="p">))</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">phi</span> <span class="o">=</span> <span class="n">flow</span><span class="o">.</span><span class="n">sample_flow_pdf</span><span class="p">(</span><span class="n">mult</span><span class="p">,</span> <span class="n">v2</span><span class="p">,</span> <span class="n">v3</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>Calculate initial condition eccentricities:</p>
@@ -153,13 +153,18 @@ You can install the development version with <a class="reference external" href=
 <h2>User guide<a class="headerlink" href="#user-guide" title="Permalink to this headline">¶</a></h2>
 <p><tt class="docutils literal"><span class="pre">hic</span></tt> consists of several logically distinct modules.
 Each has a tutorial with examples and an API reference.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">The user guide is a work in progress, and some sections are incomplete.
+More examples and information will be added over time.</p>
+</div>
 <div class="toctree-wrapper compound">
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="flow.html">Anisotropic flow</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="flow.html#the-flow-vector">The flow vector</a></li>
 <li class="toctree-l2"><a class="reference internal" href="flow.html#flow-cumulants">Flow cumulants</a></li>
 <li class="toctree-l2"><a class="reference internal" href="flow.html#random-sampling">Random sampling</a></li>
-<li class="toctree-l2"><a class="reference internal" href="flow.html#module-hic.flow">Reference</a></li>
+<li class="toctree-l2"><a class="reference internal" href="flow.html#reference">Reference</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="initial.html">Initial conditions</a><ul>
