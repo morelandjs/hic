@@ -125,6 +125,7 @@ The coefficients are</p>
 <p>The complex flow vector for an event is</p>
 <div class="math">
 \[Q_n = \sum_{i=1}^M e^{in\phi_i}.\]</div>
+<p>The magnitude of the per-particle flow vector is the <em>observed</em> flow <span class="math">\(v_n^\text{obs} = |Q_n|/M\)</span>, which will in general be different from the true flow due to finite-multiplicity fluctuations.</p>
 <p>Flow vectors can be calculated in <tt class="docutils literal"><span class="pre">hic</span></tt> with <tt class="docutils literal"><span class="pre">hic.flow.qn</span></tt>.
 First, let&#8217;s generate some random angles:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
@@ -225,10 +226,36 @@ These are all equivalent:</p>
 </div>
 <p>Finally, the function <tt class="docutils literal"><span class="pre">hic.flow.flow_pdf</span></tt> evaluates <span class="math">\(dN/d\phi\)</span> rather than sampling it:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="n">phi</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">,</span> <span class="mi">1000</span><span class="p">)</span>
-<span class="n">dndphi</span> <span class="o">=</span> <span class="n">flow</span><span class="o">.</span><span class="n">flow_pdf</span><span class="p">(</span><span class="n">phi</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.05</span><span class="p">)</span>
+<span class="n">dndphi</span> <span class="o">=</span> <span class="n">flow</span><span class="o">.</span><span class="n">flow_pdf</span><span class="p">(</span><span class="n">phi</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>The syntax for inputting <span class="math">\(v_n\)</span> is the same as for <tt class="docutils literal"><span class="pre">sample_flow_pdf</span></tt>.</p>
+<p>Let&#8217;s put this together to sample the flow PDF and histogram the samples on top of the smooth curve:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="kn">as</span> <span class="nn">plt</span>
+<span class="kn">import</span> <span class="nn">seaborn</span> <span class="kn">as</span> <span class="nn">sns</span>  <span class="c"># nice plot style</span>
+<span class="n">sns</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">font</span><span class="o">=</span><span class="s">&#39;Lato&#39;</span><span class="p">)</span>
+
+<span class="n">M</span> <span class="o">=</span> <span class="mi">10000</span>
+<span class="n">vn</span> <span class="o">=</span> <span class="o">.</span><span class="mi">1</span><span class="p">,</span> <span class="o">.</span><span class="mo">05</span><span class="p">,</span> <span class="o">.</span><span class="mo">02</span><span class="p">,</span> <span class="o">.</span><span class="mo">01</span>  <span class="c"># shorthand: v2, v3, v4, v5</span>
+<span class="n">phi</span> <span class="o">=</span> <span class="n">flow</span><span class="o">.</span><span class="n">sample_flow_pdf</span><span class="p">(</span><span class="n">M</span><span class="p">,</span> <span class="o">*</span><span class="n">vn</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">hist</span><span class="p">(</span><span class="n">phi</span><span class="p">,</span> <span class="n">bins</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span> <span class="nb">range</span><span class="o">=</span><span class="p">(</span><span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">),</span>
+         <span class="n">histtype</span><span class="o">=</span><span class="s">&#39;stepfilled&#39;</span><span class="p">,</span> <span class="n">normed</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=.</span><span class="mi">5</span><span class="p">)</span>
+<span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">,</span> <span class="mi">1000</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">flow</span><span class="o">.</span><span class="n">flow_pdf</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="o">*</span><span class="n">vn</span><span class="p">),</span> <span class="n">color</span><span class="o">=</span><span class="s">&#39;.3&#39;</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mf">1.5</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlim</span><span class="p">(</span><span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylim</span><span class="p">(</span><span class="n">ymin</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s">r&#39;$\phi$&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s">r&#39;$dN/d\phi$&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>This should make an image something like this:</p>
+<img alt="_images/flow_pdf.png" src="_images/flow_pdf.png" />
+<p>We can also check the observed flows against the inputs:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">vnobs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">flow</span><span class="o">.</span><span class="n">qn</span><span class="p">(</span><span class="n">phi</span><span class="p">,</span> <span class="o">*</span><span class="nb">range</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">6</span><span class="p">)))</span> <span class="o">/</span> <span class="n">M</span>
+<span class="nb">tuple</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">vn</span><span class="p">,</span> <span class="n">vnobs</span><span class="p">))</span>
+</pre></div>
+</div>
+<p>They should be fairly close since the multiplicity was quite large.</p>
 </div>
 <div class="section" id="reference">
 <h2>Reference<a class="headerlink" href="#reference" title="Permalink to this headline">¶</a></h2>
