@@ -133,12 +133,13 @@ You can install the development version with <a class="reference external" href=
 <p>Calculate flow cumulants:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">hic</span> <span class="kn">import</span> <span class="n">flow</span>
 
-<span class="n">vnk</span> <span class="o">=</span> <span class="n">flow</span><span class="o">.</span><span class="n">FlowCumulant</span><span class="p">(</span><span class="n">mult</span><span class="p">,</span> <span class="n">q2</span><span class="p">,</span> <span class="n">q3</span><span class="p">)</span>
+<span class="n">vnk</span> <span class="o">=</span> <span class="n">flow</span><span class="o">.</span><span class="n">Cumulant</span><span class="p">(</span><span class="n">mult</span><span class="p">,</span> <span class="n">q2</span><span class="p">,</span> <span class="n">q3</span><span class="p">)</span>
 <span class="n">v22</span> <span class="o">=</span> <span class="n">vnk</span><span class="o">.</span><span class="n">flow</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>Randomly sample events with specified flows:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="n">phi</span> <span class="o">=</span> <span class="n">flow</span><span class="o">.</span><span class="n">sample_flow_pdf</span><span class="p">(</span><span class="n">mult</span><span class="p">,</span> <span class="n">v2</span><span class="p">,</span> <span class="n">v3</span><span class="p">)</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">sampler</span> <span class="o">=</span> <span class="n">flow</span><span class="o">.</span><span class="n">Sampler</span><span class="p">(</span><span class="n">v2</span><span class="p">,</span> <span class="n">v3</span><span class="p">)</span>
+<span class="n">phi</span> <span class="o">=</span> <span class="n">sampler</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="n">mult</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>Calculate initial condition eccentricities:</p>
