@@ -285,8 +285,8 @@ class DiffCumulant(object):
         try:
             assert (self._M.ndim == 2) & (self._M.shape[-1] == 2)
         except AssertionError:
-            raise TypeError("Argument multiplicities must have two dimensions
-                            and two columns.")
+            raise TypeError("Argument multiplicities must have two dimensions "
+                            "and two columns.")
 
         try:
             qn_dict = {int(k.lstrip('q')): v for k, v in qn_kwargs.items()}
@@ -303,8 +303,8 @@ class DiffCumulant(object):
             for v in self._qn.values():
                 assert (v.ndim == 2) & (v.shape[-1] == 2)
         except AssertionError:
-            raise TypeError("Argument(s) qn must have two dimensions and
-                            two columns.")
+            raise TypeError("Argument(s) qn must have two dimensions and "
+                            "two columns.")
 
         self._corr = collections.defaultdict(dict)
         self._corr_err = collections.defaultdict(dict)
