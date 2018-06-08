@@ -242,6 +242,261 @@ class Cumulant(object):
             return vnk
 
 
+class DiffCumulant(object):
+    r"""
+    Differential multi-particle flow correlations and cumulants for an ensemble of events.
+
+    Each argument must be an array-like object of shape (n, 2) where the rows
+    correspond to individual events and the columns distinguish reference particles from
+    particles of interest. Here we assume that the first column holds reference particle
+    data, and the second column holds particles of interest data.
+
+    Required inputs:
+    ``multiplicities`` is an (n, 2) array containing event-by-event multiplicities,
+    ``q2`` is an array of the same shape containing the `Q_2` vectors for the
+    same set of events, and so on.
+
+    :param array-like multiplicities: Event-by-event multiplicities.
+
+    :param array-like q2, q3, ...:
+        `Q_n` vectors as positional arguments.
+
+    :param array-like qn_kwargs:
+        `Q_n` vectors as keyword arguments.
+
+    Member functions ``correlation``, ``cumulant``, and ``flow`` compute the
+    correlation function, cumulant, and flow coefficient, respectively.
+    Functions which contain 'mixed' correspond to correlations between the
+    reference particles and the particles of interest. Each function takes two
+    arguments ``(n, k)`` where ``n`` (positive integer) is the anisotropy order
+    and ``k`` (even positive integer) is the correlation order.  A given `(n, k)`
+    requires flow vectors `Q_n, Q_{2n}, \ldots, Q_{nk/2}`, e.g. ``(2, 4)``
+    requires ``q2, q4``.  Functions will raise ``ValueError`` if they don't
+    have the required flow vectors.  Currently ``k=2`` is implemented for
+    differential flow; ``k=4`` is planned.
+
+    """
+    def __init__(self, multiplicities, *qn, **qn_kwargs):
+        # Multiplicity must be stored as floating point because the large
+        # powers of M calculated in n-particle correlations can overflow
+        # integers, e.g. 2000^6 > 2^64.
+        self._M = np.asarray(multiplicities, dtype=float)
+
+        try:
+            assert (self._M.ndim == 2) & (self._M.shape[-1] == 2)
+        except AssertionError:
+            raise TypeError("Argument multiplicities must have two dimensions
+                            and two columns.")
+
+        try:
+            qn_dict = {int(k.lstrip('q')): v for k, v in qn_kwargs.items()}
+        except ValueError:
+            raise TypeError("Keyword parameters must have the form 'qN' "
+                            "where N is an integer.")
+        qn_dict.update(enumerate(qn, start=2))
+        self._qn = {
+            k: np.asarray(v, dtype=complex)
+            for k, v in qn_dict.items() if v is not None
+        }
+
+        try:
+            for v in self._qn.values():
+                assert (v.ndim == 2) & (v.shape[-1] == 2)
+        except AssertionError:
+            raise TypeError("Argument(s) qn must have two dimensions and
+                            two columns.")
+
+        self._corr = collections.defaultdict(dict)
+        self._corr_err = collections.defaultdict(dict)
+
+        self._corr_mixed = collections.defaultdict(dict)
+        self._corr_mixed_err = collections.defaultdict(dict)
+
+    def _get_qn(self, n):
+        try:
+            return self._qn[n]
+        except KeyError:
+            raise ValueError(
+                'q_{} is required for this calculation but was not provided.'
+                .format(n)
+            )
+
+    def _calculate_corr(self, n, k, error=False):
+        # skip if this correlation was already calculated
+        if k in self._corr[n]:
+            return
+
+        # only work with reference particles (first column)
+        M, _ = self._M.T
+        Msum = np.einsum('i->', M)  # fast sum(M)
+        Msqsum = np.inner(M, M)  # fast sum(M*M)
+
+        qn, _ = self._get_qn(n).T
+        qnsqsum = np.vdot(qn, qn).real  # fast sum(|qn|^2)
+
+        if k == 2:
+            self._corr[n][k] = (qnsqsum - Msum) / (Msqsum - Msum)
+
+        # TODO: k == 4
+
+        else:
+            raise ValueError('Unknown k: {}.'.format(k))
+
+    def _calculate_corr_mixed(self, n, k, error=False):
+        # skip if this correlation was already calculated
+        if k in self._corr_mixed[n]:
+            return
+
+        # Let M denote the mutiplicity of the reference particles and N
+        # the multiplicity of the particles of interest.
+        M, N = self._M.T
+        Msum = np.einsum('i->', M)  # fast sum(M)
+        MNsum = np.inner(M, N)  # fast sum(M*N)
+
+        # Let qn denote the complex vectors of the reference particles, and
+        # pn the complex vectors of the particles of interest.
+        qn, pn = self._get_qn(n).T
+        pnqnsum = np.vdot(pn, qn).real  # fast sum(|pn*qn|)
+
+        if k == 2:
+            self._corr_mixed[n][k] = (pnqnsum - Msum) / (MNsum - Msum)
+
+        # TODO: k == 4
+
+        else:
+            raise ValueError('Unknown k: {}.'.format(k))
+
+    def _calculate_corr_err(self, n, k):
+        raise ValueError('Error is not yet implemented for differential flow.')
+
+    def _calculate_corr_mixed_err(self, n, k):
+        raise ValueError('Error is not yet implemented for differential flow.')
+
+    def correlation(self, n, k, error=False):
+        r"""
+        Calculate `\langle k \rangle_n`,
+        the `k`-particle correlation function for `n`\ th-order anisotropy.
+
+        :param int n: Anisotropy order.
+        :param int k: Correlation order.
+
+        :param bool error:
+            Errors are not yet implemented.
+
+        """
+        self._calculate_corr(n, k)
+        corr_nk = self._corr[n][k]
+
+        if error:
+            self._calculate_corr_err(n, k)
+            return corr_nk, self._corr_err[n][k]
+        else:
+            return corr_nk
+
+    def correlation_mixed(self, n, k, error=False):
+        r"""
+        Calculate `\langle k' \rangle_n`,
+        the `k`-particle mixed correlation function for `n`\ th-order anisotropy.
+
+        :param int n: Anisotropy order.
+        :param int k: Correlation order.
+
+        :param bool error:
+            Errors are not yet implemented.
+
+        """
+        self._calculate_corr_mixed(n, k)
+        corr_nk_mixed = self._corr_mixed[n][k]
+
+        if error:
+            self._calculate_corr_mixed_err(n, k)
+            return corr_nk_mixed, self._corr_mixed_err[n][k]
+        else:
+            return corr_nk_mixed
+
+    def cumulant(self, n, k, error=False):
+        r"""
+        Calculate `c_n\{k\}`,
+        the `k`-particle cumulant for `n`\ th-order anisotropy.
+
+        :param int n: Anisotropy order.
+        :param int k: Correlation order.
+
+        :param bool error:
+            Errors are not yet implemented.
+
+        """
+        corr_nk = self.correlation(n, k, error=error)
+
+        if k == 2:
+            return corr_nk
+        else:
+            raise ValueError('Unknown k: {}.'.format(k))
+
+    def cumulant_mixed(self, n, k, error=False):
+        r"""
+        Calculate `d_n\{k\}`,
+        the `k`-particle mixed cumulant for `n`\ th-order anisotropy.
+
+        :param int n: Anisotropy order.
+        :param int k: Correlation order.
+
+        :param bool error:
+            Errors are not yet implemented.
+
+        """
+        corr_nk_mixed = self.correlation_mixed(n, k, error=error)
+
+        if k == 2:
+            return corr_nk_mixed
+        else:
+            raise ValueError('Unknown k: {}.'.format(k))
+
+    _cnk_prefactor = {2: 1}
+
+    def flow(self, n, k, error=False, imaginary='nan'):
+        r"""
+        Calculate differential `v_n\{k\}`,
+        the estimate of differential flow coefficient `v_n` from the
+        `k`-particle cumulant.
+
+        :param int n: Anisotropy order.
+        :param int k: Correlation order.
+
+        :param bool error:
+            Errors are not yet implemented.
+
+        :param str imaginary: (optional)
+            Determines behavior when the computed flow is imaginary:
+
+            - ``'nan'`` (default) -- Return NaN and raise a ``RuntimeWarning``.
+            - ``'negative'`` -- Return the negative absolute value.
+            - ``'zero'`` -- Return ``0.0``.
+
+        """
+        cnk = self.cumulant(n, k, error=error)
+        dnk = self.cumulant_mixed(n, k, error=error)
+
+        vnk_to_k = self._cnk_prefactor[k] * cnk
+        kinv = 1/k
+
+        if vnk_to_k >= 0:
+            vnk = dnk / vnk_to_k**kinv
+        else:
+            if imaginary == 'negative':
+                vnk = -dnk / (-vnk_to_k)**kinv
+            elif imaginary == 'zero':
+                vnk = 0.
+            else:
+                warnings.warn('Imaginary flow: returning NaN.', RuntimeWarning)
+                vnk = float('nan')
+
+        if k == 2 and error:
+            raise ValueError('Error is not yet implemented for differential flow.')
+        else:
+            return vnk
+
+
 class Sampler(object):
     r"""
     Random flow event generator.
